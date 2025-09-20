@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Garba Mahotsav 2025 - Book Tickets</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body {
+      background: url("https://i.ibb.co/ksdQ4Q2t/df.jpg") no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    @media (min-width: 768px) {
+      body {
+        background: url("https://i.ibb.co/6RfwhRH5/22-1.jpg") no-repeat center center fixed;
+        background-size: cover;
+      }
+    }
+
+    .container, #scannerBox, #successMessage {
+      background:#ffffffd9; border-radius:20px; padding:30px; max-width:420px; width:100%;
+      box-shadow:0 8px 30px rgba(0,0,0,0.15); text-align:center; animation: fadeIn 0.8s ease;
+    }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+    .header h1 { font-size:1.8rem; margin-bottom:10px; background: linear-gradient(90deg,#fd4b2b,#f12b59); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .header .garba-icon { font-size:2.5rem; color:#ff416c; margin-bottom:10px; }
+    .header p { font-size:0.95rem; color:#444; }
+    form { margin-top:20px; text-align:left; }
+    label { display:block; margin-bottom:6px; font-size:0.9rem; font-weight:600; color:#333; }
+    input[type="text"], input[type="tel"], input[type="file"] {
+      width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:10px; font-size:0.95rem; outline:none; transition: all 0.3s;
+    }
+    input:focus { border-color:#ff416c; box-shadow:0 0 6px rgba(255,65,108,0.4); }
+    .phone-group { display:flex; align-items:center; gap:6px; margin-bottom:15px; }
+    .phone-prefix { font-weight:bold; background:#f2f2f2; padding:12px; border:1px solid #ddd; border-radius:10px; }
+    .ticket-box { background:#fff7f9; border:1px solid #ffd6e0; border-radius:12px; padding:15px; margin-bottom:15px; text-align:center; }
+    .ticket-box h3 { font-size:1rem; margin-bottom:8px; color:#ff416c; }
+    .ticket-box .price { font-size:1.2rem; font-weight:bold; margin-bottom:10px; }
+    .quantity-control { display:flex; align-items:center; justify-content:center; gap:10px; }
+    .quantity-btn { background:#ff416c; color:white; border:none; padding:8px 14px; border-radius:8px; font-size:1rem; cursor:pointer; transition: background 0.3s; }
+    .quantity-btn:hover { background:#ff4b2b; }
+    .quantity-input { width:50px; text-align:center; font-size:1rem; border:none; background:#f2f2f2; border-radius:6px; padding:6px; }
+    .total-display { font-size:1.3rem; font-weight:bold; text-align:center; margin-bottom:20px; color:#333; }
+    .submit-btn, #finalSubmit { width:100%; padding:14px; border:none; border-radius:12px; background:linear-gradient(90deg,#ff416c,#ff4b2b); color:white; font-size:1rem; font-weight:600; cursor:pointer; transition: transform 0.2s, box-shadow 0.2s; }
+    .submit-btn:hover, #finalSubmit:hover { transform: scale(1.03); box-shadow: 0 6px 15px rgba(255,65,108,0.3); }
+    #scannerBox h2 { margin-bottom:15px; color:#ff416c; }
+    #upiQr { width:200px; margin:15px 0; border:4px solid #ff416c; border-radius:12px; padding:6px; background:#fff; }
+    .upload-section { margin-top:15px; text-align:left; }
+    #successMessage { color:#333; }
+    #successMessage i { font-size:3rem; color:#28a745; margin-bottom:10px; }
+    .confetti { position:absolute; top:0; animation:fall linear forwards; }
+    @keyframes fall { to { transform: translateY(100vh) rotate(720deg); opacity:0; } }
+  </style>
+</head>
+<body>
+
+  <!-- Booking Form -->
+  <div class="container" id="formContainer">
+    <div class="header">
+      <h1>Garba Night 2025</h1>
+      <div class="garba-icon"><i class="fas fa-drum"></i></div>
+      <p>Embrace the rhythm! Book your tickets now!</p>
+    </div>
+    <form id="bookingForm">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="Enter your full name" required>
+
+      <label for="phone">WhatsApp Number</label>
+      <div class="phone-group">
+        <span class="phone-prefix">+91</span>
+        <input type="tel" id="phone" placeholder="Enter 10-digit number" maxlength="10" pattern="[0-9]{10}" required />
+      </div>
+
+      <label for="city">City</label>
+      <input type="text" id="city" placeholder="Enter your city" required>
+
+      <div class="ticket-box">
+        <h3>Per Head Ticket</h3>
+        <div class="price">₹300</div>
+        <div class="quantity-control">
+          <button type="button" class="quantity-btn" id="decreaseQty">-</button>
+          <input type="text" id="ticketQty" value="0" class="quantity-input" readonly>
+          <button type="button" class="quantity-btn" id="increaseQty">+</button>
+        </div>
+      </div>
+
+      <div id="attendeesContainer"></div>
+
+      <div class="total-display" id="totalAmount">₹0</div>
+
+      <button type="submit" class="submit-btn">Book Now</button>
+    </form>
+  </div>
+
+  <!-- QR Scanner Section -->
+  <div id="scannerBox" style="display:none;">
+    <h2>Scan & Pay UPI</h2>
+    <img id="upiQr" alt="UPI QR Code" />
+    <div class="upload-section">
+      <label for="paymentProof">Upload Payment Screenshot</label>
+      <input type="file" id="paymentProof" accept="image/*">
+    </div>
+    <button id="finalSubmit">Submit</button>
+  </div>
+
+  <!-- Success Message -->
+  <div id="successMessage" style="display:none;">
+    <i class="fas fa-check-circle"></i>
+    <h2>Booking Successful!</h2>
+    <p>Your tickets have been booked successfully.</p>
+    <p>You will receive confirmation on WhatsApp shortly.</p>
+    <p>Your Booking ID: <strong id="bookingIdDisplay">-</strong></p>
+  </div>
+
+  <script>
+    const ticketPrice = 300;
+    let ticketQty = 0;
+
+    const qtyInput = document.getElementById('ticketQty');
+    const totalAmountEl = document.getElementById('totalAmount');
+    const paymentProofInput = document.getElementById('paymentProof');
+    const finalSubmitBtn = document.getElementById('finalSubmit');
+    const successMessage = document.getElementById('successMessage');
+    const bookingForm = document.getElementById('bookingForm');
+    const formContainer = document.getElementById('formContainer');
+    const scannerBox = document.getElementById('scannerBox');
+    const bookingIdDisplay = document.getElementById('bookingIdDisplay');
+    const upiQr = document.getElementById('upiQr');
+    const attendeesContainer = document.getElementById('attendeesContainer');
+
+    const sheetDbUrl = 'https://sheetdb.io/api/v1/yfh8c87ivrcw2';
+    const imgbbApiKey = '76401496af6b283b64e410032237a8d5';
+
+    function updateTotal() {
+      const total = ticketQty * ticketPrice;
+      totalAmountEl.textContent = `₹${total}`;
+    }
+
+    function generateAttendeeFields() {
+      attendeesContainer.innerHTML = '';
+      if (ticketQty > 1) {
+        for (let i = 1; i < ticketQty; i++) {
+          const div = document.createElement('div');
+          div.innerHTML = `<label>Attendee ${i+1} Name</label>
+                           <input type="text" class="attendee-name" placeholder="Enter attendee name" required>`;
+          attendeesContainer.appendChild(div);
+        }
+      }
+    }
+
+    function getAttendees() {
+      return Array.from(document.querySelectorAll('.attendee-name')).map(input => input.value.trim());
+    }
+
+    document.getElementById('increaseQty').addEventListener('click', () => {
+      ticketQty++;
+      qtyInput.value = ticketQty;
+      updateTotal();
+      generateAttendeeFields();
+    });
+
+    document.getElementById('decreaseQty').addEventListener('click', () => {
+      if (ticketQty > 0) {
+        ticketQty--;
+        qtyInput.value = ticketQty;
+        updateTotal();
+        generateAttendeeFields();
+      }
+    });
+
+    // Prevent non-numeric input in phone
+    document.getElementById('phone').addEventListener('input', function() {
+      this.value = this.value.replace(/\D/g, '').slice(0,10);
+    });
+
+    bookingForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const phoneInput = document.getElementById('phone').value.trim();
+      const phone = "91" + phoneInput;
+      const city = document.getElementById('city').value.trim();
+
+      if (!name || !phoneInput || phoneInput.length !== 10 || !city || ticketQty < 1) {
+        alert('Please enter a valid 10-digit WhatsApp number, fill all fields, and select at least one ticket.');
+        return;
+      }
+
+      const attendees = getAttendees();
+      if (attendees.length !== ticketQty - 1 || attendees.some(a => a === '')) {
+        alert('Please fill all attendee names.');
+        return;
+      }
+
+      const bookingId = 'GM2025-' + Math.floor(1000 + Math.random() * 9000);
+      const total = ticketQty * ticketPrice;
+
+      const upiId = '9448352260@axl';
+      const payeeName = 'shivu nagri';
+      const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${total}&cu=INR&tn=BookingID:${bookingId}`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`;
+      upiQr.src = qrUrl;
+
+      bookingForm.dataset.name = name;
+      bookingForm.dataset.phone = phone;
+      bookingForm.dataset.city = city;
+      bookingForm.dataset.ticketQty = ticketQty;
+      bookingForm.dataset.totalAmount = total;
+      bookingForm.dataset.bookingId = bookingId;
+
+      formContainer.style.display = 'none';
+      scannerBox.style.display = 'block';
+      finalSubmitBtn.disabled = false;
+      finalSubmitBtn.textContent = 'Submit';
+    });
+
+    finalSubmitBtn.addEventListener('click', () => {
+      const file = paymentProofInput.files[0];
+      if (!file) {
+        alert('Please upload the payment screenshot before submitting.');
+        return;
+      }
+
+      finalSubmitBtn.disabled = true;
+      finalSubmitBtn.textContent = 'Submitting...';
+
+      const attendees = getAttendees();
+      const formData = new FormData();
+      formData.append('image', file);
+
+      fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, { method:'POST', body:formData })
+      .then(res => res.json())
+      .then(imgbbResponse => {
+        if (!imgbbResponse.success) throw new Error('Image upload failed');
+        const imageUrl = imgbbResponse.data.url;
+
+        const bookingData = {
+          data: {
+            timestamp: new Date().toLocaleString(),
+            name: bookingForm.dataset.name,
+            phone: bookingForm.dataset.phone,
+            bookingId: bookingForm.dataset.bookingId,
+            city: bookingForm.dataset.city,
+            qty: bookingForm.dataset.ticketQty,
+            totalAmount: bookingForm.dataset.totalAmount,
+            attendees: attendees,
+            paymentScreenshot: imageUrl
+          }
+        };
+
+        return fetch(sheetDbUrl, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(bookingData)
+        });
+      })
+      .then(res => res.json())
+      .then(sheetDbResponse => {
+        if (sheetDbResponse.created === 1) {
+          bookingIdDisplay.textContent = bookingForm.dataset.bookingId;
+          scannerBox.style.display = 'none';
+          successMessage.style.display = 'block';
+          launchConfetti();
+        } else throw new Error('Failed to save booking.');
+      })
+      .catch(err => {
+        alert(err.message || 'Error processing booking.');
+        console.error(err);
+        finalSubmitBtn.disabled = false;
+      })
+      .finally(() => finalSubmitBtn.textContent = 'Submit');
+    });
+
+    function launchConfetti() {
+      const confettiCount = 100;
+      const container = successMessage;
+      const colors = ['#FFCC00','#FF4D4D','#33CC33','#FF66CC','#3399FF'];
+      for (let i=0;i<confettiCount;i++){
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+        confetti.style.left = Math.random()*100+'%';
+        confetti.style.animationDuration = (3+Math.random()*2)+'s';
+        confetti.style.animationDelay = (Math.random()*3)+'s';
+        confetti.style.width = (5+Math.random()*7)+'px';
+        confetti.style.height = (8+Math.random()*10)+'px';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '0' : '50%';
+        confetti.style.position = 'fixed';
+        container.appendChild(confetti);
+        confetti.addEventListener('animationend', ()=>confetti.remove());
+      }
+    }
+
+    updateTotal();
+  </script>
+</body>
+</html>
