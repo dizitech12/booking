@@ -15,6 +15,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      flex-direction: column;
     }
     @media (min-width: 768px) {
       body {
@@ -26,11 +27,33 @@
     .container, #scannerBox, #successMessage {
       background:#ffffffd9; border-radius:20px; padding:30px; max-width:420px; width:100%;
       box-shadow:0 8px 30px rgba(0,0,0,0.15); text-align:center; animation: fadeIn 0.8s ease;
+      margin-bottom: 60px; /* to avoid overlap with strip */
     }
     @keyframes fadeIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+    .header-note {
+      font-size: 0.75rem;
+      color: #fff;
+      background: rgba(0,0,0,0.5);
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
     .header h1 { font-size:1.8rem; margin-bottom:10px; background: linear-gradient(90deg,#fd4b2b,#f12b59); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
     .header .garba-icon { font-size:2.5rem; color:#ff416c; margin-bottom:10px; }
     .header p { font-size:0.95rem; color:#444; }
+
+    .contact-box {
+      font-size: 0.85rem;
+      margin-top: 12px;
+      padding: 8px;
+      background: #fff3f3;
+      border: 1px solid #ffbaba;
+      border-radius: 8px;
+      color:#333;
+    }
+
     form { margin-top:20px; text-align:left; }
     label { display:block; margin-bottom:6px; font-size:0.9rem; font-weight:600; color:#333; }
     input[type="text"], input[type="tel"], input[type="file"] {
@@ -56,6 +79,40 @@
     #successMessage i { font-size:3rem; color:#28a745; margin-bottom:10px; }
     .confetti { position:absolute; top:0; animation:fall linear forwards; }
     @keyframes fall { to { transform: translateY(100vh) rotate(720deg); opacity:0; } }
+
+    /* Moving Instagram Strip */
+    .insta-strip {
+      position: relative;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      backdrop-filter: blur(12px) saturate(180%);
+      background: rgba(255,255,255,0.15);
+      border-top: 1px solid rgba(255,255,255,0.3);
+      padding: 8px 0;
+      overflow: hidden;
+      z-index: 999;
+    }
+    .insta-track {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      animation: scroll-left 20s linear infinite;
+      white-space: nowrap;
+    }
+    .insta-track img {
+      width:40px; height:40px; border-radius:50%; border:2px solid #fff;
+    }
+    .insta-text {
+      font-size: 0.9rem;
+      color: #fff;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    @keyframes scroll-left {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
   </style>
 </head>
 <body>
@@ -63,6 +120,7 @@
   <!-- Booking Form -->
   <div class="container" id="formContainer">
     <div class="header">
+      <span class="header-note">Only for Savji peoples</span>
       <h1>Garba Night 2025</h1>
       <div class="garba-icon"><i class="fas fa-drum"></i></div>
       <p>Embrace the rhythm! Book your tickets now!</p>
@@ -91,11 +149,11 @@
       </div>
 
       <div id="attendeesContainer"></div>
-
       <div class="total-display" id="totalAmount">₹0</div>
-
       <button type="submit" class="submit-btn">Book Now</button>
     </form>
+
+    <div class="contact-box">Contact for query : <strong>9448352260</strong></div>
   </div>
 
   <!-- QR Scanner Section -->
@@ -116,6 +174,25 @@
     <p>Your tickets have been booked successfully.</p>
     <p>You will receive confirmation on WhatsApp shortly.</p>
     <p>Your Booking ID: <strong id="bookingIdDisplay">-</strong></p>
+  </div>
+
+  <!-- Instagram Moving Strip -->
+  <div class="insta-strip">
+    <div class="insta-track">
+      <span class="insta-text">Follow for updates</span>
+      <a href="https://www.instagram.com/manju_raibagi?igsh=M3Zkc2t2ZDYzazVq" target="_blank">
+        <img src="https://i.ibb.co/CsN57BX6/Screenshot-2025-09-22-11-21-58-272-com-instagram-android-removebg-preview.png" alt="Insta1">
+      </a>
+      <a href="https://www.instagram.com/shivaprasad_a_nagari__?igsh=andxdWdxYWgza3hn" target="_blank">
+        <img src="https://i.ibb.co/p6T35z78/IMG-20250922-113341.jpg" alt="Insta2">
+      </a>
+      <a href="https://www.instagram.com/_jayraj_studio_?igsh=MW9wY3VmbHBjenM4eA==" target="_blank">
+        <img src="https://i.ibb.co/xq3LXvZF/IMG-20250922-113439.jpg" alt="Insta3">
+      </a>
+      <a href="https://www.instagram.com/_savji_chora_ba?igsh=MWdpajBkZWx3bHdybg==" target="_blank">
+        <img src="https://i.ibb.co/m5dRQ4fJ/IMG-20250922-113512.jpg" alt="Insta4">
+      </a>
+    </div>
   </div>
 
   <script>
@@ -174,7 +251,6 @@
       }
     });
 
-    // Prevent non-numeric input in phone
     document.getElementById('phone').addEventListener('input', function() {
       this.value = this.value.replace(/\D/g, '').slice(0,10);
     });
@@ -187,7 +263,7 @@
       const city = document.getElementById('city').value.trim();
 
       if (!name || !phoneInput || phoneInput.length !== 10 || !city || ticketQty < 1) {
-        alert('Please enter a valid 10-digit WhatsApp number, fill all fields, and select at least one ticket.');
+        alert('Please enter valid details and select at least one ticket.');
         return;
       }
 
@@ -222,7 +298,7 @@
     finalSubmitBtn.addEventListener('click', () => {
       const file = paymentProofInput.files[0];
       if (!file) {
-        alert('Please upload the payment screenshot before submitting.');
+        alert('Please upload the payment screenshot.');
         return;
       }
 
@@ -270,14 +346,13 @@
       })
       .catch(err => {
         alert(err.message || 'Error processing booking.');
-        console.error(err);
         finalSubmitBtn.disabled = false;
       })
       .finally(() => finalSubmitBtn.textContent = 'Submit');
     });
 
     function launchConfetti() {
-      const confettiCount = 100;
+      const confettiCount = 80;
       const container = successMessage;
       const colors = ['#FFCC00','#FF4D4D','#33CC33','#FF66CC','#3399FF'];
       for (let i=0;i<confettiCount;i++){
