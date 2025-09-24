@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Garba Mahotsav 2025 - Book Tickets</title>
+  <title>Garba Night 2025 - Book Tickets</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -75,6 +75,30 @@
     #scannerBox h2 { margin-bottom:15px; color:#ff416c; }
     #upiQr { width:200px; margin:15px 0; border:4px solid #ff416c; border-radius:12px; padding:6px; background:#fff; }
     .upload-section { margin-top:15px; text-align:left; }
+
+    /* Payment note styling */
+    .payment-note {
+      margin-top:8px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      background: linear-gradient(90deg, rgba(255,244,224,0.95), rgba(255,234,223,0.95));
+      border-left: 4px solid #ff7a59;
+      padding:10px 12px;
+      border-radius:8px;
+      color:#333;
+      font-size:0.9rem;
+      line-height:1.2;
+    }
+    .payment-note i {
+      font-size:1.2rem;
+      color:#d94300;
+      margin-top:2px;
+      min-width:18px;
+      text-align:center;
+    }
+    .payment-note strong { display:block; font-weight:700; color:#d94300; margin-bottom:4px; font-size:0.95rem; }
+
     #successMessage { color:#333; }
     #successMessage i { font-size:3rem; color:#28a745; margin-bottom:10px; }
     .confetti { position:absolute; top:0; animation:fall linear forwards; }
@@ -162,7 +186,15 @@
     <img id="upiQr" alt="UPI QR Code" />
     <div class="upload-section">
       <label for="paymentProof">Upload Payment Screenshot</label>
-      <input type="file" id="paymentProof" accept="image/*">
+      <input type="file" id="paymentProof" accept="image/*" aria-describedby="paymentNote">
+      <!-- Styled payment note -->
+      <div id="paymentNote" class="payment-note" role="note" aria-live="polite">
+        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+        <div>
+          <strong>Upload valid payment screenshot</strong>
+          Please upload a valid payment screenshot. Payment will be verified manually; booking will be confirmed via WhatsApp only if successful.
+        </div>
+      </div>
     </div>
     <button id="finalSubmit">Submit</button>
   </div>
@@ -170,8 +202,8 @@
   <!-- Success Message -->
   <div id="successMessage" style="display:none;">
     <i class="fas fa-check-circle"></i>
-    <h2>Booking Successful!</h2>
-    <p>Your tickets have been booked successfully.</p>
+    <h2>Booking Received!</h2>
+    <p>your booking will be comfirmed once the payment is verified.</p>
     <p>You will receive confirmation on WhatsApp shortly.</p>
     <p>Your Booking ID: <strong id="bookingIdDisplay">-</strong></p>
   </div>
@@ -375,3 +407,4 @@
   </script>
 </body>
 </html>
+
